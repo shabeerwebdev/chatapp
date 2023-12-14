@@ -1,0 +1,5 @@
+node_modules/
+react-chat-app/node_modules/
+build/
+.DS_Store
+.env

@@ -1,24 +1,31 @@
 const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
+const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
 
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+app.use(express.static(path.join(__dirname, 'react-chat-app', 'build')));
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'react-chat-app', 'build', 'index.html'));
 });
 
 // Add a set of users currently typing
 const usersTyping = new Set();
 
 io.on('connection', (socket) => {
-  console.log('A user connected');
+  console.log('A user connected',Array.from(usersTyping));
 
   // Listen for incoming messages
   socket.on('chat message', (msg) => {
     // Broadcast the message along with the user's name to all connected clients
+    if (!socket.username) {
+      socket.username = "Anonymous";
+    }
+
     io.emit('chat message', { user: socket.username, message: msg });
     // Notify all clients that a user has sent a message
     socket.broadcast.emit('notification', { user: socket.username, message: 'has sent a message' });
@@ -58,7 +65,7 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
