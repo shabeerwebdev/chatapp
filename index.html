@@ -3,44 +3,111 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simple Chat App</title>
+  <title>Improved Chat App</title>
 </head>
 <body>
+  <!-- Add an input for the user to set their name -->
+  <input id="username" placeholder="Enter your name" />
+  <button onclick="setUsername()">Set Name</button>
+
   <ul id="messages"></ul>
-  <form id="form" action="">
-    <input id="m" autocomplete="off" /><button>Send</button>
-  </form>
+
+  <!-- Add an event listener for the input field to emit 'typing' events -->
+  <input id="m" autocomplete="off" oninput="startTyping()" onblur="stopTyping()" />
+  <button onclick="sendMessage()">Send</button>
+
+  <!-- Add a div to display typing information -->
+  <div id="typing"></div>
 
   <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
   <script>
     const socket = io();
 
-    // Add message to the chat
-    function addMessage(msg) {
-      const ul = document.getElementById('messages');
-      const li = document.createElement('li');
-      li.textContent = msg;
-      ul.appendChild(li);
+    // Add a function to set the user's name
+    function setUsername() {
+      const username = document.getElementById('username').value;
+      if (username.trim() !== '') {
+        socket.emit('set username', username);
+        document.getElementById('username').disabled = true;
+      }
     }
 
-    // Listen for incoming messages
-    socket.on('chat message', (msg) => {
-      addMessage(msg);
+    // Modify the addMessage function to display the user's name and message
+    function addMessage(data) {
+      const ul = document.getElementById('messages');
+      const li = document.createElement('li');
+
+      // Display the user's name only if it's not the current user
+      if (data.user === 'You') {
+        li.textContent = `${data.user}: ${data.message}`;
+      } else {
+        li.textContent = `${data.user}: ${data.message}`;
+      }
+
+      ul.appendChild(li);
+
+      // Notify when a user has sent a message
+      if (data.user !== 'You') {
+        const notification = document.createElement('div');
+        notification.textContent = `${data.user} ${data.message}`;
+        document.body.appendChild(notification);
+        setTimeout(() => {
+          notification.remove();
+        }, 5000);
+      }
+    }
+
+    // Add functions to emit 'typing' and 'stop typing' events
+    function startTyping() {
+      socket.emit('typing');
+    }
+
+    function stopTyping() {
+      socket.emit('stop typing');
+    }
+
+    // Listen for 'update typing' events and display typing information
+    socket.on('update typing', (users) => {
+      const typingDiv = document.getElementById('typing');
+      if (users.length > 0) {
+        const typingText = users.join(', ') + (users.length > 1 ? ' are' : ' is') + ' typing...';
+        typingDiv.textContent = typingText;
+      } else {
+        typingDiv.textContent = '';
+      }
     });
 
-    // Handle form submission
-    const form = document.querySelector('form');
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
+    // Listen for incoming messages
+    socket.on('chat message', (data) => {
+      addMessage(data);
+    });
+
+    // Listen for a user joining and add a system message
+    socket.on('user joined', (message) => {
+      addMessage({ user: 'System', message });
+    });
+
+    // Listen for 'notification' events and display notifications
+    socket.on('notification', (data) => {
+      const notification = document.createElement('div');
+      notification.textContent = `${data.user} ${data.message}`;
+      document.body.appendChild(notification);
+      setTimeout(() => {
+        notification.remove();
+      }, 5000);
+    });
+
+    // Add a function to send messages
+    function sendMessage() {
       const input = document.getElementById('m');
       const message = input.value.trim();
       if (message !== '') {
         // Send the message to the server
         socket.emit('chat message', message);
         input.value = '';
-        addMessage(`You: ${message}`);
+        addMessage({ user: 'You', message });
       }
-    });
+    }
   </script>
 </body>
 </html>
