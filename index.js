@@ -20,13 +20,13 @@ io.on('connection', (socket) => {
   console.log('A user connected',Array.from(usersTyping));
 
   // Listen for incoming messages
-  socket.on('chat message', (msg) => {
+  socket.on('chat message', ({trimmedMessage, avatar}) => {
     // Broadcast the message along with the user's name to all connected clients
     if (!socket.username) {
       socket.username = "Anonymous";
     }
 
-    io.emit('chat message', { user: socket.username, message: msg });
+    io.emit('chat message', { user: socket.username, message: trimmedMessage, avatar });
     // Notify all clients that a user has sent a message
     socket.broadcast.emit('notification', { user: socket.username, message: 'has sent a message' });
   });
