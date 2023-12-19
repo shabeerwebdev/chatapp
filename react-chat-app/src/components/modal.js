@@ -1,16 +1,16 @@
-import React from "react";
-import { Button, Header, Image, Modal } from "semantic-ui-react";
-import { Input } from "semantic-ui-react";
-import { avatars } from "../data/avatars.js";
-import "../App.scss";
+import React from 'react'
+import { Button, Header, Image, Modal } from 'semantic-ui-react'
+import { Input } from 'semantic-ui-react'
+import { avatars } from '../data/avatars.js'
+import '../App.scss'
 
 function CreateChatModal({ username, setUsername, setUsernameAndJoin }) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(false)
 
   const dummyFun = () => {
-    setUsernameAndJoin();
-    setOpen(false);
-  };
+    setUsernameAndJoin()
+    setOpen(false)
+  }
 
   return (
     <Modal
@@ -65,7 +65,7 @@ function CreateChatModal({ username, setUsername, setUsernameAndJoin }) {
         />
       </Modal.Actions>
     </Modal>
-  );
+  )
 }
 
-export default CreateChatModal;
+export default CreateChatModal

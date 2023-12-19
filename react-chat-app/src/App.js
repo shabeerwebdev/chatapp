@@ -1,90 +1,90 @@
-import React, { useState, useEffect, useRef } from "react";
-import io from "socket.io-client";
-import "./App.scss";
-import { Button, Card, Form, Icon, Input, Popup } from "semantic-ui-react";
-import CreateChatModal from "./components/modal";
-import { messagess } from "./data/message";
-import Dropdown from "./components/dropdown";
-const socket = io();
+import React, { useState, useEffect, useRef } from 'react'
+import io from 'socket.io-client'
+import './App.scss'
+import { Button, Card, Form, Icon, Input, Popup } from 'semantic-ui-react'
+import CreateChatModal from './components/modal'
+import { messagess } from './data/message'
+import Dropdown from './components/dropdown'
+const socket = io()
 
 function ChatApp() {
-  const [username, setUsername] = useState("");
-  const [message, setMessage] = useState("");
-  const [avatar, setAvatar] = useState({});
-  const [messages, setMessages] = useState(messagess);
-  const [newUser, setNewUser] = useState([]);
-  const [typingUsers, setTypingUsers] = useState([]);
+  const [username, setUsername] = useState('')
+  const [message, setMessage] = useState('')
+  const [avatar, setAvatar] = useState({})
+  const [messages, setMessages] = useState(messagess)
+  const [newUser, setNewUser] = useState([])
+  const [typingUsers, setTypingUsers] = useState([])
 
-  console.log(messages, "baby");
-  const [isVisible, setIsVisible] = useState(false);
+  console.log(messages, 'baby')
+  const [isVisible, setIsVisible] = useState(false)
 
   // Function to toggle visibility on click
   const toggleVisibility = () => {
-    setIsVisible(!isVisible);
-  };
+    setIsVisible(!isVisible)
+  }
 
-  const chatContainerRef = useRef(null);
+  const chatContainerRef = useRef(null)
 
   // Function to scroll the chat container to the bottom
   const scrollToBottom = () => {
-    chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-  };
+    chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight
+  }
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    scrollToBottom()
+  }, [messages])
 
   useEffect(() => {
-    socket.on("chat message", (data) => {
-      setMessages((prevMessages) => [...prevMessages, data]);
-    });
+    socket.on('chat message', (data) => {
+      setMessages((prevMessages) => [...prevMessages, data])
+    })
 
-    socket.on("user joined", (message) => {
+    socket.on('user joined', (message) => {
       setMessages((prevMessages) => [
         ...prevMessages,
-        { user: "System", message },
-      ]);
-    });
+        { user: 'System', message },
+      ])
+    })
 
-    socket.on("notification", (data) => {
-      const notification = `${data.user} ${data.message}`;
-      alert(notification);
-    });
+    socket.on('notification', (data) => {
+      const notification = `${data.user} ${data.message}`
+      alert(notification)
+    })
 
-    socket.on("update typing", (users) => {
-      console.log(users, "jatti");
-      setTypingUsers(users);
-    });
+    socket.on('update typing', (users) => {
+      console.log(users, 'jatti')
+      setTypingUsers(users)
+    })
 
     return () => {
-      socket.disconnect();
-    };
-  }, []);
+      socket.disconnect()
+    }
+  }, [])
 
   const setUsernameAndJoin = () => {
-    const trimmedUsername = username.trim();
-    if (trimmedUsername !== "") {
-      socket.emit("set username", trimmedUsername);
-      console.log(`Sent set username event with value: ${trimmedUsername}`);
+    const trimmedUsername = username.trim()
+    if (trimmedUsername !== '') {
+      socket.emit('set username', trimmedUsername)
+      console.log(`Sent set username event with value: ${trimmedUsername}`)
     }
-  };
+  }
 
   const startTyping = () => {
-    socket.emit("typing");
-  };
+    socket.emit('typing')
+  }
 
   const stopTyping = () => {
-    socket.emit("stop typing");
-  };
+    socket.emit('stop typing')
+  }
 
   const sendMessage = () => {
-    const trimmedMessage = message.trim();
-    if (trimmedMessage !== "") {
-      socket.emit("chat message", { trimmedMessage, avatar });
+    const trimmedMessage = message.trim()
+    if (trimmedMessage !== '') {
+      socket.emit('chat message', { trimmedMessage, avatar })
       // setMessages((prevMessages) => [...prevMessages, { user: username, message: trimmedMessage }]);
-      setMessage("");
+      setMessage('')
     }
-  };
+  }
 
   return (
     <div className="container">
@@ -121,7 +121,7 @@ function ChatApp() {
       >
         <div className="msg-container" ref={chatContainerRef}>
           {messages.map((msg, index) =>
-            msg.user === "System" ? (
+            msg.user === 'System' ? (
               <p className="new-user">{msg.message}</p>
             ) : (
               <div className="msg-card">
@@ -136,15 +136,15 @@ function ChatApp() {
                   description={msg.message}
                 />
               </div>
-            )
+            ),
           )}
         </div>
 
         <div className="msg-section">
           {typingUsers.length > 0 && typingUsers[0] !== username && (
-            <div style={{ marginLeft: "1em" }}>
-              {`${typingUsers.join(", ")} ${
-                typingUsers.length > 1 ? "are" : "is"
+            <div style={{ marginLeft: '1em' }}>
+              {`${typingUsers.join(', ')} ${
+                typingUsers.length > 1 ? 'are' : 'is'
               } typing`}
             </div>
           )}
@@ -167,7 +167,7 @@ function ChatApp() {
       </div>
       {/* <Card.Group items={items} /> */}
     </div>
-  );
+  )
 }
 
-export default ChatApp;
+export default ChatApp
