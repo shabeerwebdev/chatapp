@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import io from 'socket.io-client'
 import './App.scss'
-import { Button, Card, Form, Icon, Input, Popup } from 'semantic-ui-react'
+import { Button, Card, Form, Icon, Input, Menu, Popup } from 'semantic-ui-react'
 import CreateChatModal from './components/modal'
 import { messagess } from './data/message'
 import Dropdown from './components/dropdown'
@@ -12,7 +12,7 @@ function ChatApp() {
   const [message, setMessage] = useState('')
   const [avatar, setAvatar] = useState({})
   const [messages, setMessages] = useState(messagess)
-  const [newUser, setNewUser] = useState([])
+  const [open, setOpen] = useState([])
   const [typingUsers, setTypingUsers] = useState([])
 
   console.log(messages, 'baby')
@@ -87,86 +87,93 @@ function ChatApp() {
   }
 
   return (
-    <div className="container">
-      <div className="sidebar">
-        <Button animated="fade">
-          <Button.Content visible>Start group chat</Button.Content>
-          <Button.Content hidden>Start group chat</Button.Content>
+    <>
+      <Menu>
+        <Button onClick={() => setOpen(!open)}>
+          <Icon name="options" />
         </Button>
+      </Menu>
+      <div className={`container ${open ? 'showSidebar' : 'hideSidebar'}`}>
+        <div className="sidebar">
+          <Button animated="fade">
+            <Button.Content visible>Start group chat</Button.Content>
+            <Button.Content hidden>Start group chat</Button.Content>
+          </Button>
 
-        <Button primary animated="fade" onClick={toggleVisibility}>
-          <Button.Content visible>Start new chat</Button.Content>
-          <Button.Content hidden>Start new chat</Button.Content>
-        </Button>
+          <Button primary animated="fade" onClick={toggleVisibility}>
+            <Button.Content visible>Start new chat</Button.Content>
+            <Button.Content hidden>Start new chat</Button.Content>
+          </Button>
 
-        <Dropdown
-          isVisible={isVisible}
-          setUsernameAndJoin={setUsernameAndJoin}
-          username={username}
-          setUsername={setUsername}
-          toggleVisibility={toggleVisibility}
-          setAvatar={setAvatar}
-          avatar={avatar}
-        />
+          <Dropdown
+            isVisible={isVisible}
+            setUsernameAndJoin={setUsernameAndJoin}
+            username={username}
+            setUsername={setUsername}
+            toggleVisibility={toggleVisibility}
+            setAvatar={setAvatar}
+            avatar={avatar}
+          />
 
-        {/* <CreateChatModal
+          {/* <CreateChatModal
           username={username}
           setUsername={setUsername}
           setUsernameAndJoin={setUsernameAndJoin}
         /> */}
-      </div>
-      <div
-        className="msg-card-container"
-        // style={{ display: "flex", flexDirection: "column" }}
-      >
-        <div className="msg-container" ref={chatContainerRef}>
-          {messages.map((msg, index) =>
-            msg.user === 'System' ? (
-              <p className="new-user">{msg.message}</p>
-            ) : (
-              <div className="msg-card">
-                <img
-                  src={`https://api.dicebear.com/7.x/${msg.avatar.category}/svg?seed=${msg.avatar.image}`}
-                  alt="avatar"
-                />
-                <Card
-                  // image='/images/avatar/large/elliot.jpg'
-                  header={msg.user}
-                  // meta="now"
-                  description={msg.message}
-                />
-              </div>
-            ),
-          )}
         </div>
-
-        <div className="msg-section">
-          {typingUsers.length > 0 && typingUsers[0] !== username && (
-            <div style={{ marginLeft: '1em' }}>
-              {`${typingUsers.join(', ')} ${
-                typingUsers.length > 1 ? 'are' : 'is'
-              } typing`}
+        <div className="msg-card-container">
+          {
+            <div className="msg-container" ref={chatContainerRef}>
+              {messages.length > 0 &&
+                messages.map((msg, index) =>
+                  msg.user === 'System' ? (
+                    <p className="new-user">{msg.message}</p>
+                  ) : (
+                    <div className="msg-card">
+                      <img
+                        src={`https://api.dicebear.com/7.x/${msg.avatar.category}/svg?seed=${msg.avatar.image}`}
+                        alt="avatar"
+                      />
+                      <Card
+                        // image='/images/avatar/large/elliot.jpg'
+                        header={msg.user}
+                        // meta="now"
+                        description={msg.message}
+                      />
+                    </div>
+                  ),
+                )}
             </div>
-          )}
-          <Input
-            type="text"
-            placeholder="Search..."
-            action
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onInput={startTyping}
-            onBlur={stopTyping}
-            fluid
-          >
-            <input />
-            <Button onClick={sendMessage} type="submit">
-              Send
-            </Button>
-          </Input>
+          }
+
+          <div className="msg-section">
+            {typingUsers.length > 0 && typingUsers[0] !== username && (
+              <div style={{ marginLeft: '1em' }}>
+                {`${typingUsers.join(', ')} ${
+                  typingUsers.length > 1 ? 'are' : 'is'
+                } typing`}
+              </div>
+            )}
+            <Input
+              type="text"
+              placeholder="Search..."
+              action
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onInput={startTyping}
+              onBlur={stopTyping}
+              fluid
+            >
+              <input />
+              <Button onClick={sendMessage} type="submit">
+                Send
+              </Button>
+            </Input>
+          </div>
         </div>
+        {/* <Card.Group items={items} /> */}
       </div>
-      {/* <Card.Group items={items} /> */}
-    </div>
+    </>
   )
 }
 
