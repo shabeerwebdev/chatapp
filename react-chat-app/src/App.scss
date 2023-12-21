@@ -2,6 +2,7 @@
   display: flex;
   align-items: flex-start;
   height: calc(100vh - 40px);
+  width: 100vw;
 }
 
 .sidebar {
@@ -28,7 +29,8 @@
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
-    max-height: 50vh;
+    height: 300px;
+    max-height: 40vh;
     overflow-y: scroll;
     overflow-x: hidden;
     // gap: 0.5rem;
@@ -80,6 +82,7 @@
   position: relative;
   height: calc(100vh - 40px);
   max-height: calc(100vh - 40px);
+  overflow: hidden;
   width: 100%;
 
   @media only screen and (max-width: 767px) {
@@ -177,6 +180,7 @@
 .showSidebar {
   transition: transform 0.3s ease-out;
   transform: translateX(0);
+  overflow-x: hidden;
 }
 .hideSidebar {
   transition: transform 0.3s ease-out;
@@ -194,4 +198,27 @@
 .ui.cards > .card > .content > .header + .description,
 .ui.cards > .card > .content > .meta + .description {
   margin-top: 0.1rem !important;
+}
+
+.ui.radio.checkbox {
+  height: 70px !important;
+  width: 70px !important;
+  position: absolute;
+  opacity: 0;
+}
+
+.ui.pointing.below.prompt.label{
+  white-space: normal;
+  background: #fff!important;
+  border: 1px solid #e0b4b4!important;
+  color: #9f3a38!important;
+}
+
+.shit {
+  display: block;
+    margin: 0 0 0.28571429rem 0;
+    color: rgba(0,0,0,.87);
+    font-size: .92857143em;
+    font-weight: 700;
+    text-transform: none;
 }
