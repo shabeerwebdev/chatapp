@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
+    "clean": "cd react-chat-app && rimraf build",
+    "build": "npm run clean && cd react-chat-app && npm run build",
     "build:react": "cd react-chat-app && npm install && npm run build",
     "lint": "eslint .",
     "format": "prettier --write .",
@@ -19,6 +21,7 @@
     "express": "^4.18.2",
     "http": "0.0.1-security",
     "nodemon": "^3.0.2",
+    "rimraf": "^5.0.5",
     "socket.io": "^4.7.2"
   },
   "devDependencies": {
