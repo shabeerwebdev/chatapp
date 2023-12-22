@@ -10,7 +10,7 @@ const io = socketIO(server)
 app.use(express.static(path.join(__dirname, 'react-chat-app', 'build')))
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'react-chat-app', 'build', 'index.html'))
+  res.sendFile(path.join(__dirname, 'react-chat-app', 'lib', 'index.html'))
 })
 
 // Add a set of users currently typing
